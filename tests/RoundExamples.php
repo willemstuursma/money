@@ -3,6 +3,7 @@
 namespace Tests\Money;
 
 use Money\Money;
+use Money\Number;
 
 /**
  * Mocking with typehints usage won't work here as the trait is autoloaded.
@@ -15,6 +16,7 @@ trait RoundExamples
     {
         return [
             [2.6, Money::ROUND_HALF_EVEN, '3'],
+            [Number::fromFloat(2.6), Money::ROUND_HALF_EVEN, '3'],
             [2.5, Money::ROUND_HALF_EVEN, '2'],
             [3.5, Money::ROUND_HALF_EVEN, '4'],
             [-2.6, Money::ROUND_HALF_EVEN, '-3'],

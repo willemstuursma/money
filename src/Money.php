@@ -256,13 +256,13 @@ final class Money implements \JsonSerializable
     /**
      * Asserts that the operand is integer or float.
      *
-     * @param float|int|string $operand
+     * @param float|int|string|Number $operand
      *
-     * @throws \InvalidArgumentException If $operand is neither integer nor float
+     * @throws \InvalidArgumentException If $operand is neither numeric or a number
      */
     private function assertOperand($operand)
     {
-        if (!is_numeric($operand)) {
+        if (!($operand instanceof Number) && !is_numeric($operand)) {
             throw new \InvalidArgumentException(sprintf(
                 'Operand should be a numeric value, "%s" given.',
                 is_object($operand) ? get_class($operand) : gettype($operand)
@@ -299,8 +299,8 @@ final class Money implements \JsonSerializable
      * Returns a new Money object that represents
      * the multiplied value by the given factor.
      *
-     * @param float|int|string $multiplier
-     * @param int              $roundingMode
+     * @param float|int|string|Number $multiplier
+     * @param int                     $roundingMode
      *
      * @return Money
      */
@@ -310,7 +310,11 @@ final class Money implements \JsonSerializable
         $this->assertRoundingMode($roundingMode);
 
         if (is_float($multiplier)) {
-            $multiplier = (string) Number::fromFloat($multiplier);
+            $multiplier = Number::fromFloat($multiplier);
+        }
+
+        if ($multiplier instanceof Number) {
+            $multiplier = (string) $multiplier;
         }
 
         $product = $this->round($this->getCalculator()->multiply($this->amount, $multiplier), $roundingMode);
@@ -322,8 +326,8 @@ final class Money implements \JsonSerializable
      * Returns a new Money object that represents
      * the divided value by the given factor.
      *
-     * @param float|int|string $divisor
-     * @param int              $roundingMode
+     * @param float|int|string|Number $divisor
+     * @param int                     $roundingMode
      *
      * @return Money
      */
@@ -333,7 +337,11 @@ final class Money implements \JsonSerializable
         $this->assertRoundingMode($roundingMode);
 
         if (is_float($divisor)) {
-            $divisor = (string) Number::fromFloat($divisor);
+            $divisor = Number::fromFloat($divisor);
+        }
+
+        if ($divisor instanceof Number) {
+            $divisor = (string) $divisor;
         }
 
         if ($this->getCalculator()->compare((string) $divisor, '0') === 0) {
